@@ -3,9 +3,15 @@ import gdown
 import pandas as pd
 from datetime import datetime
 
-URL = "https://docs.google.com/spreadsheets/d/1DlBT1pF8-zMECntRWXFsL46gZyvNp1BJlJ6LXGze4dA/edit?gid=0#gid=0"
-CSV_OUTPUT_FILENAME = f"PROJECT_SOAR_DATASET_{datetime.today().strftime('%Y-%m-%d')}.csv"
-JSON_OUTPUT_FILENAME = f"PROJECT_SOAR_DATASET_{datetime.today().strftime('%Y-%m-%d')}.json"
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+os.makedirs("build", exist_ok=True)
+
+URL = os.getenv("URL")
+CSV_OUTPUT_FILENAME = f"build/{os.getenv('CSV_OUTPUT_FILENAME')}_{datetime.today().strftime('%Y-%m-%d')}.csv"
+JSON_OUTPUT_FILENAME = f"build/{os.getenv('JSON_OUTPUT_FILENAME')}_{datetime.today().strftime('%Y-%m-%d')}.json"
 
 
 def sheet_to_csv_url(sheet_url: str) -> pd.DataFrame:

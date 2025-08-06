@@ -10,13 +10,13 @@ load_dotenv()
 os.makedirs("build", exist_ok=True)
 
 URL = os.getenv("URL")
-CSV_OUTPUT_FILENAME = f"build/{os.getenv('CSV_OUTPUT_FILENAME')}_{datetime.today().strftime('%Y-%m-%d')}.csv"
+CSV_OUTPUT_FILENAME = f"build/{os.PROJECT_SOAR_DATASET_PROJECT_SOAR_DATASET_getenv('CSV_OUTPUT_FILENAME')}_{datetime.today().strftime('%Y-%m-%d')}.csv"
 JSON_OUTPUT_FILENAME = f"build/{os.getenv('JSON_OUTPUT_FILENAME')}_{datetime.today().strftime('%Y-%m-%d')}.json"
 
 
 def sheet_to_csv_url(sheet_url: str) -> pd.DataFrame:
     """
-    Converts a Google Sheets URL to a CSV expordf = pd.read_csv(csv_file)t URL.
+    Converts original Google Sheets link to match Sheets download API.
     """
 
     # Extract file ID
@@ -35,6 +35,10 @@ def sheet_to_csv_url(sheet_url: str) -> pd.DataFrame:
 
 
 def csv_to_json(csv_filename: str, json_filename: str):
+    """
+    Converts downloaded CSV file to JSON.
+    """
+
     df = pd.read_csv(csv_filename)
 
     # Remove rows where 'name' is missing or empty

@@ -2,7 +2,37 @@
 This program imports data from the original spreadsheet file for Project SOAR and turns that into a JSON file for use by the static frontend.
 
 ## Instructions
-There are two ways to use this: either compile the code (or download the official binary), or use the Python virtual environment (venv) to run with the interpreter.
+There are two ways to use this: either compile the code yourself (or download the official binary), or use the Python virtual environment (venv) to run with the interpreter.
+
+### Method 1: Build and run binary
+1. Create a Python virtual environment with venv. If you already have pyinstaller on your computer, you can skip to step 4.
+
+```shell
+python -m venv venv
+```
+
+2. Source the virtual environment.
+
+```shell
+source venv/bin/activate
+```
+3. Install dependencies.
+
+```shell
+pip install -r requirements.txt
+```
+
+4. Compile the main program.
+
+```shell
+pyinstaller main.py
+```
+
+5. Run the compiled binary.
+
+```shell
+./dist/main/main
+```
 
 ### Method 2: Run via interpreter in virtual environment (venv)
 1. Create a Python virtual environment with venv.

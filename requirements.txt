@@ -1,3 +1,4 @@
+altgraph==0.17.4
 beautifulsoup4==4.13.4
 certifi==2025.8.3
 charset-normalizer==3.4.2
@@ -5,11 +6,16 @@ filelock==3.18.0
 gdown==5.2.0
 idna==3.10
 numpy==2.3.2
+packaging==25.0
 pandas==2.3.1
+pyinstaller==6.15.0
+pyinstaller-hooks-contrib==2025.8
 PySocks==1.7.1
 python-dateutil==2.9.0.post0
+python-dotenv==1.1.1
 pytz==2025.2
 requests==2.32.4
+setuptools==80.9.0
 six==1.17.0
 soupsieve==2.7
 tqdm==4.67.1

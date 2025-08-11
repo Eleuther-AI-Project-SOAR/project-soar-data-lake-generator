@@ -10,7 +10,7 @@ load_dotenv()
 os.makedirs("build", exist_ok=True)
 
 URL = os.getenv("URL")
-CSV_OUTPUT_FILENAME = f"build/{os.PROJECT_SOAR_DATASET_PROJECT_SOAR_DATASET_getenv('CSV_OUTPUT_FILENAME')}_{datetime.today().strftime('%Y-%m-%d')}.csv"
+CSV_OUTPUT_FILENAME = f"build/{os.getenv('CSV_OUTPUT_FILENAME')}_{datetime.today().strftime('%Y-%m-%d')}.csv"
 JSON_OUTPUT_FILENAME = f"build/{os.getenv('JSON_OUTPUT_FILENAME')}_{datetime.today().strftime('%Y-%m-%d')}.json"
 
 

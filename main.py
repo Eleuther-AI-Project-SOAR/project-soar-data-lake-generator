@@ -13,7 +13,7 @@ os.makedirs("build", exist_ok=True)
 URL = os.getenv("URL")
 CSV_OUTPUT_FILENAME = f"build/{os.getenv('CSV_OUTPUT_FILENAME')}_{datetime.today().strftime('%Y-%m-%d')}.csv"
 JSON_OUTPUT_FILENAME = f"build/{os.getenv('JSON_OUTPUT_FILENAME')}_{datetime.today().strftime('%Y-%m-%d')}.json"
-JS_OUTPUT_FILENAME = f"build/{os.getenv('JS_OUTPUT_FILENAME')}_{datetime.today().strftime('%Y-%m-%d')}.json"
+JS_OUTPUT_FILENAME = f"build/{os.getenv('JS_OUTPUT_FILENAME')}.json"
 
 
 def sheet_to_csv_url(sheet_url: str) -> pd.DataFrame:

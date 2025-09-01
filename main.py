@@ -36,59 +36,53 @@ def sheet_to_csv_url(sheet_url: str) -> pd.DataFrame:
     return f"https://docs.google.com/spreadsheets/d/{file_id}/export?format=csv&gid={gid}"
 
 
-def safe_float(val, default=-1.0):
-    try:
-        return float(val)
-    except (ValueError, TypeError):
-        return default
-
-
-def safe_str(val: object) -> str:
-    if val is None or (isinstance(val, float) and pd.isna(val)):
-        return ""
-    return str(val)
-
-
 def csv_to_json(csv_filename: str, json_filename: str):
     df = pd.read_csv(csv_filename)
+    df.columns = df.columns.str.strip()
 
-    if "name" in df.columns:
-        df = df[df["name"].notna() & (df["name"].astype(str).str.strip() != "")]
-    else:
-        print("Warning: 'name' column not found. Output will be empty.")
-        df = pd.DataFrame(columns=df.columns)
+    # Cleanup
+    df["score"] = pd.to_numeric(df["score"], errors="coerce")
+    df = df.dropna(subset=["score"])
+    df = df.reset_index(drop=True)
 
-    # Drop unnamed columns
-    cols_to_drop = [f"Unnamed: {i}" for i in range(16, 23)]
-    df = df.drop(columns=[c for c in cols_to_drop if c in df.columns])
-
-    # Transformation rules
-    transformed = []
+    # Write
+    records = []
     for _, row in df.iterrows():
         features = []
-        if str(row.get("Research paper reading group?", "")).lower().startswith("yes"):
-            features.append("Reading Group")
-        if str(row.get("Other Reading group? (eg math)", "")).lower().startswith("yes"):
-            features.append("Paper Channel")
-        if str(row.get("Events/workshops etc", "")).lower().startswith("yes"):
-            features.append("VC events/Office Hours")
-        if str(row.get("Community projects?", "")).lower().startswith("yes"):
-            features.append("Jobs Board")
 
-        transformed.append({
-            "name": safe_str(row.get("name")).strip(),
-            "rating": safe_float(row.get("score (take this with a grain of salt)", -1)),
-            "tag": safe_str(row.get("Type of server (research/general etc)")).strip().title(),
-            "activityLevel": safe_str(row.get("Activity (va: multiple posts an hour, active: posts a few times a day or so; semi-active posts a week/ whenever someone asks something, mostly inactive, inactive) ;Not related to reading group etc activites.;If they have those things then they are probably active ; includes projects")).strip().title(),
-            "language": safe_str(row.get("language")).replace(" language", "").strip().title(),
-            "location": safe_str(row.get("location:")).strip().title(),
-            "description": safe_str(row.get("notes")).strip(),
+        if str(row.get("Research paper reading group?", "no")).lower() == "yes":
+            features.append("Reading Group")
+        if str(row.get("paper channel?", "no")).lower() == "yes":
+            features.append("Paper Channel")
+        if str(row.get("vc events,office/coworking hours,etc", "no")).lower() == "yes":
+            features.append("VC events/Office Hours")
+        if str(row.get("jobs board/opportunities/funding links", "no")).lower() == "yes":
+            features.append("Jobs Board")
+        if (str(row.get("company/github projects?", "no")).lower() == "yes" or
+                str(row.get("community created projects", "no")).lower() == "yes"):
+            features.append(
+                "Company/Github Projects, Community Created Projects")
+
+        record = {
+            "name": row["name"],
+            "rating": float(row["score"]) if pd.notnull(row["score"]) else None,
+            "tag": row["Type of server"].capitalize() if pd.notnull(row["Type of server"]) else None,
+            "overview": row.get("what specifcally", ""),
+            "activityLevel": row["Activity"].title() if pd.notnull(row["Activity"]) else None,
+            "language": row["language"].capitalize() if pd.notnull(row["language"]) else None,
+            "location": row["location"].capitalize() if pd.notnull(row["location"]) else None,
+            "governanceType": row["governance type"] if pd.notnull(row["governance type"]) else None,
+            "links": row["links"] if pd.notnull(row["links"]) else None,
+            "description": row["notes"] if pd.notnull(row["notes"]) else None,
             "features": features
-        })
-    # Save to JSON
-    pd.DataFrame(transformed).to_json(
-        json_filename, orient="records", indent=2)
-    print(f"Custom JSON saved as {json_filename}")
+        }
+
+        records.append(record)
+
+    with open(json_filename, "w", encoding="utf-8") as f:
+        json.dump(records, f, indent=2, ensure_ascii=False)
+
+    print(f"JSON saved to {json_filename}")
 
 
 def json_to_js(json_filename: str, js_filename: str):
